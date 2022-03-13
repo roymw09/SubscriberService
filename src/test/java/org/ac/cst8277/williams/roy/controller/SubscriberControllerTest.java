@@ -61,16 +61,15 @@ public class SubscriberControllerTest {
     @BeforeEach
     public void setup() {
         List<String> statements = Arrays.asList(
-                "ALTER TABLE subscriber DROP CONSTRAINT CONSTRAINT_17;",
-                "DROP TABLE IF EXISTS subscriber;",
                 "DROP TABLE IF EXISTS subscribed_to;",
+                "DROP TABLE IF EXISTS subscriber;",
                 "CREATE TABLE subscriber ( " +
-                        "id SERIAL PRIMARY KEY, " +
+                        "id SERIAL, " +
                         "user_id INT NOT NULL, " +
                         "PRIMARY KEY (id)); ",
 
                 "CREATE TABLE subscribed_to (" +
-                        "id SERIAL PRIMARY KEY, " +
+                        "id SERIAL, " +
                         "subscriber_id INT NOT NULL, " +
                         "publisher_id INT NOT NULL," +
                         "PRIMARY KEY (id), " +

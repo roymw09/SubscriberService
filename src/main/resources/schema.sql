@@ -1,9 +1,9 @@
+DROP TABLE IF EXISTS subscribed_to;
 DROP TABLE IF EXISTS subscriber;
 CREATE TABLE subscriber (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id INT NOT NULL
 );
-DROP TABLE IF EXISTS subscribed_to;
 CREATE TABLE subscribed_to (
     id SERIAL PRIMARY KEY,
     subscriber_id INT NOT NULL,
