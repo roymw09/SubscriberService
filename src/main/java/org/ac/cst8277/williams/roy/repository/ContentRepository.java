@@ -7,6 +7,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
 public interface ContentRepository extends ReactiveCrudRepository<Content, Long> {
-    //@Query("SELECT * FROM content WHERE subscriber_id = :subscriberId")
-    Mono<Content> findBySubscriberId(@Param("subscriberId") Integer subscriberId);
+    @Query("SELECT * FROM content WHERE publisher_id = :publisherId")
+    Mono<Content> findBySubscriberId(@Param("publisherId") Integer publisherId);
 }

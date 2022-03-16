@@ -8,14 +8,10 @@ import org.ac.cst8277.williams.roy.repository.ContentRepository;
 import org.ac.cst8277.williams.roy.repository.SubscribedToRepository;
 import org.ac.cst8277.williams.roy.repository.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.ReactiveSubscription;
-import org.springframework.data.redis.core.ReactiveRedisOperations;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import javax.annotation.PostConstruct;
 
 @Service
 @Slf4j
@@ -29,21 +25,13 @@ public class SubscriberService {
     private SubscribedToRepository subscribedToRepository;
 
     @Autowired
-    ContentRepository contentRepository;
+    private ContentRepository contentRepository;
 
-    @Autowired
-    private ReactiveRedisOperations<String, Content> reactiveRedisTemplate;
-
-    @PostConstruct
-    private void init() {
-        this.reactiveRedisTemplate
-                .listenTo(ChannelTopic.of("messages"))
-                .map(ReactiveSubscription.Message::getMessage)
-                .subscribe(System.out::println);
-
+    public Mono<Content> createMessage(Content content) {
+        Content subContent = new Content(null, content.getPublisher_id(), content.getContent());
+        System.out.println(content.getPublisher_id() + " " + content.getContent());
+        return contentRepository.save(subContent);
     }
-
-    public Mono<Content> createContent(Content content) { return contentRepository.save(content); }
 
     public Mono<Subscriber> createSubscriber(Subscriber subscriber) {
         return subscriberRepository.save(subscriber);
