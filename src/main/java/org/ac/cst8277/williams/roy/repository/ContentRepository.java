@@ -8,10 +8,10 @@ import reactor.core.publisher.Flux;
 
 public interface ContentRepository extends ReactiveCrudRepository<Content, Long> {
     // find all content by a publisher who the user subscribes to
-    @Query("SELECT content.id, content.publisher_id, content.content" +
-            "FROM content, subscribed_to" +
-            "WHERE content.publisher_id = :publisherId" +
-            "AND subscribed_to.publisher_id = content.publisher_id" +
-            "AND subscribed_to.subscriber_id = :subscriberId")
+    @Query("SELECT content.id, content.publisher_id, content.content " +
+            "FROM content, subscribed_to " +
+            "WHERE content.publisher_id = :publisherId " +
+            "AND subscribed_to.publisher_id = content.publisher_id " +
+            "AND subscribed_to.subscriber_id = :subscriberId ")
     Flux<Content> findSubscriberContent(@Param("subscriberId") Integer subscriberId, @Param("publisherId") Integer publisherId);
 }
