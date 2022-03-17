@@ -72,7 +72,6 @@ public class SubscriberController {
     @GetMapping("/sub/content/all/{subscriberId}/{publisherId}")
     // find all content by a publisher who the user subscribes to
     public Flux<Content> findSubscriberContent(@PathVariable Integer subscriberId, @PathVariable Integer publisherId) {
-        Flux<Content> contentFlux = subscriberService.findSubscriberContent(subscriberId, publisherId);
         return subscriberService.findSubscriberContent(subscriberId, publisherId);
     }
 }
