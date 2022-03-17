@@ -3,6 +3,7 @@ package org.ac.cst8277.williams.roy.controller;
 import org.ac.cst8277.williams.roy.model.Content;
 import org.ac.cst8277.williams.roy.model.SubscribedTo;
 import org.ac.cst8277.williams.roy.model.Subscriber;
+import org.ac.cst8277.williams.roy.model.User;
 import org.ac.cst8277.williams.roy.service.SubscriberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.ReactiveSubscription;
@@ -11,6 +12,8 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
@@ -73,5 +76,18 @@ public class SubscriberController {
     // find all content by a publisher who the user subscribes to
     public Flux<Content> findSubscriberContent(@PathVariable Integer subscriberId, @PathVariable Integer publisherId) {
         return subscriberService.findSubscriberContent(subscriberId, publisherId);
+    }
+
+    // check the users token through the UMS to verify that they have subscriber rights
+    @GetMapping("/verify/{email}/{token}")
+    public ResponseEntity<User> checkUserToken(@PathVariable("email") String email, @PathVariable("token") String token) {
+        ResponseEntity<User> restTemplate;
+        try {
+            restTemplate = new RestTemplate().getForEntity(
+                    "http://localhost:8081/users/" + email + "/" + token, User.class);
+        } catch (HttpClientErrorException e) {
+            restTemplate = ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders()).body(null);
+        }
+        return restTemplate;
     }
 }
