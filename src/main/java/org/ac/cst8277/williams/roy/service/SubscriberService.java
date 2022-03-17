@@ -29,7 +29,6 @@ public class SubscriberService {
 
     public Mono<Content> createMessage(Content content) {
         Content subContent = new Content(null, content.getPublisher_id(), content.getContent());
-        System.out.println(content.getPublisher_id() + " " + content.getContent());
         return contentRepository.save(subContent);
     }
 
@@ -51,5 +50,10 @@ public class SubscriberService {
 
     public Flux<SubscribedTo> findAllSubscribers(Integer publisherId) {
         return subscribedToRepository.findAllSubscribers(publisherId);
+    }
+
+    // find all content by a publisher who the user subscribes to
+    public Flux<Content> findSubscriberContent(Integer subscriberId, Integer publisherId) {
+        return contentRepository.findSubscriberContent(subscriberId, publisherId);
     }
 }
