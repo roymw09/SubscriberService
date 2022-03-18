@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("/subService")
+@RequestMapping("/sub")
 public class SubscriberController {
 
     @Autowired
@@ -37,42 +37,42 @@ public class SubscriberController {
                 });
     }
 
-    @PostMapping
+    @PostMapping("/content/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Content> createMessage(Content content) {
+    public Mono<Content> createMessage(@RequestBody Content content) {
         return subscriberService.createMessage(content);
     }
 
-    @PostMapping("/sub/create")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Subscriber> createSubscriber(@RequestBody Subscriber subscriber) {
         return subscriberService.createSubscriber(subscriber);
     }
 
-    @PostMapping("/sub/subscribe")
+    @PostMapping("/subscribe")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SubscribedTo> subscribe(@RequestBody SubscribedTo subscribedTo) {
         return subscriberService.subscribe(subscribedTo);
     }
 
-    @GetMapping("/sub/{subscriberId}")
+    @GetMapping("/{subscriberId}")
     public Mono<ResponseEntity<Subscriber>> findById(@PathVariable Integer subscriberId) {
         Mono<Subscriber> subscriber = subscriberService.findById(subscriberId);
         return subscriber.map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/sub/findPublishers/{subscriberId}")
+    @GetMapping("/findPublishers/{subscriberId}")
     public Flux<SubscribedTo> findAllPublishers(@PathVariable Integer subscriberId) {
         return subscriberService.findAllPublishers(subscriberId);
     }
 
-    @GetMapping("/sub/findSubscribers/{publisherId}")
+    @GetMapping("/findSubscribers/{publisherId}")
     public Flux<SubscribedTo> findAllSubscribers(@PathVariable Integer publisherId) {
         return subscriberService.findAllSubscribers(publisherId);
     }
 
-    @GetMapping("/sub/content/all/{subscriberId}/{publisherId}")
+    @GetMapping("/content/all/{subscriberId}/{publisherId}")
     // find all content by a publisher who the user subscribes to
     public Flux<Content> findSubscriberContent(@PathVariable Integer subscriberId, @PathVariable Integer publisherId) {
         return subscriberService.findSubscriberContent(subscriberId, publisherId);

@@ -1,8 +1,11 @@
 package org.ac.cst8277.williams.roy.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ac.cst8277.williams.roy.model.Content;
 import org.ac.cst8277.williams.roy.model.SubscribedTo;
 import org.ac.cst8277.williams.roy.model.Subscriber;
+import org.ac.cst8277.williams.roy.model.User;
+import org.ac.cst8277.williams.roy.repository.ContentRepository;
 import org.ac.cst8277.williams.roy.repository.SubscribedToRepository;
 import org.ac.cst8277.williams.roy.repository.SubscriberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +22,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -44,9 +43,13 @@ public class SubscriberControllerTest {
     private SubscribedToRepository subscribedToRepository;
 
     @Autowired
+    private ContentRepository contentRepository;
+
+    @Autowired
     private DatabaseClient databaseClient;
 
     private List<Subscriber> getSubscriberData() {
+        User test = new User();
         return Arrays.asList(new Subscriber(null, 1),
                 new Subscriber(null, 2),
                 new Subscriber(null, 3));
@@ -58,9 +61,15 @@ public class SubscriberControllerTest {
                 new SubscribedTo(null, 3, 5));
     }
 
+    private List<Content> getContentData() {
+        return Arrays.asList(new Content(null, 5, "Test content"),
+                new Content(null, 5, "More test content"));
+    }
+
     @BeforeEach
     public void setup() {
         List<String> statements = Arrays.asList(
+                "DROP TABLE IF EXISTS content;",
                 "DROP TABLE IF EXISTS subscribed_to;",
                 "DROP TABLE IF EXISTS subscriber;",
                 "CREATE TABLE subscriber ( " +
@@ -73,7 +82,14 @@ public class SubscriberControllerTest {
                         "subscriber_id INT NOT NULL, " +
                         "publisher_id INT NOT NULL," +
                         "PRIMARY KEY (id), " +
-                        "FOREIGN KEY (subscriber_id) REFERENCES subscriber(id));"
+                        "FOREIGN KEY (subscriber_id) REFERENCES subscriber(id));",
+
+                "CREATE TABLE content (\n" +
+                        "    id SERIAL,\n" +
+                        "    publisher_id INT NOT NULL,\n" +
+                        "    content VARCHAR(500) NOT NULL,\n" +
+                        "    PRIMARY KEY (id)\n" +
+                        ");"
         );
 
         statements.forEach(it -> databaseClient.sql(it)
@@ -96,11 +112,19 @@ public class SubscriberControllerTest {
                     System.out.println("SubscribedTo inserted from controller test " + subscribedTo);
                 })
                 .blockLast();
+
+        contentRepository.deleteAll()
+                .thenMany(Flux.fromIterable(getContentData()))
+                .flatMap(contentRepository::save)
+                .doOnNext(content -> {
+                    System.out.println("Content inserted from controller test " + content);
+                })
+                .blockLast();
     }
 
     @Test
     public void getSubscriberById() {
-        webTestClient.get().uri("/subService".concat("/{subscriberId}"), "1")
+        webTestClient.get().uri("/sub".concat("/{subscriberId}"), "1")
                 .exchange()
                 .expectBody()
                 .jsonPath("$.user_id", "1");
@@ -108,16 +132,37 @@ public class SubscriberControllerTest {
 
     @Test
     public void getSubscriberById_NotFound() {
-        webTestClient.get().uri("/subService".concat("/{subscriberId}"), "6")
+        webTestClient.get().uri("/sub".concat("/{subscriberId}"), "6")
                 .exchange()
                 .expectStatus()
                 .isNotFound();
     }
 
+
+    @Test
+    public void createMessage() {
+        Content content = new Content(null, 6, "hello");
+        webTestClient.post().uri("/sub/content/create").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
+                .body(Mono.just(content), Content.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.id").isNotEmpty()
+                .jsonPath("$.content").isEqualTo("hello");
+    }
+
+    @Test
+    public void getContentForSubscriber() {
+        webTestClient.get().uri("/sub".concat("/content/all/{subscriberId}/{publisherId}"), "1", "5")
+                .exchange()
+                .expectBody()
+                .jsonPath("$.publisher_id", "5");
+    }
+
     @Test
     public void createSubscriber() {
         Subscriber subscriber = new Subscriber(null, 5);
-        webTestClient.post().uri("/subService").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
+        webTestClient.post().uri("/sub/create").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(subscriber), Subscriber.class)
                 .exchange()
                 .expectStatus().isCreated()
@@ -129,7 +174,7 @@ public class SubscriberControllerTest {
     @Test
     public void subscribeToUser() {
         SubscribedTo subscribedTo = new SubscribedTo(null, 1, 5);
-        webTestClient.post().uri("/subService/subscribe").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
+        webTestClient.post().uri("/sub/subscribe").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(subscribedTo), Subscriber.class)
                 .exchange()
                 .expectStatus().isCreated()
@@ -141,7 +186,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void getAllPublishersBySubscriberId(){
-        webTestClient.get().uri("/subService".concat("/findPublishers/{subscriberId}"), "1")
+        webTestClient.get().uri("/sub".concat("/findPublishers/{subscriberId}"), "1")
                 .exchange()
                 .expectBody()
                 .jsonPath("$.user_id", "1");
@@ -149,7 +194,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void getAllSubscribersByPublisherId() {
-        webTestClient.get().uri("/subService".concat("/findSubscribers/{publisherId}"), "1")
+        webTestClient.get().uri("/sub".concat("/findSubscribers/{publisherId}"), "1")
                 .exchange()
                 .expectBody()
                 .jsonPath("$.user_id", "1");
