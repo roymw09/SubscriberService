@@ -1,5 +1,6 @@
 server:
   port: 8082
+  forward-headers-strategy: framework
 spring:
   application:
     name: subscriber-service
@@ -22,3 +23,7 @@ spring:
     url: r2dbc:h2:mem:///test?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     name: sa
     password:
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}

@@ -3,6 +3,7 @@ package org.ac.cst8277.williams.roy;
 import org.ac.cst8277.williams.roy.model.Content;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class SubscriberServiceApplication {
 
     public static void main(String[] args) {
