@@ -84,7 +84,7 @@ public class SubscriberController {
         ResponseEntity<User> restTemplate;
         try {
             restTemplate = new RestTemplate().getForEntity(
-                    "http://localhost:8081/users/" + email + "/" + token, User.class);
+                    "http://usermanagement-service:8081/users/" + email + "/" + token, User.class);
         } catch (HttpClientErrorException e) {
             restTemplate = ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders()).body(null);
         }
