@@ -5,6 +5,7 @@ import org.ac.cst8277.williams.roy.model.SubscribedTo;
 import org.ac.cst8277.williams.roy.model.Subscriber;
 import org.ac.cst8277.williams.roy.model.User;
 import org.ac.cst8277.williams.roy.service.SubscriberService;
+import org.ac.cst8277.williams.roy.service.TokenPublishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.ReactiveSubscription;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/sub")
@@ -26,11 +28,17 @@ public class SubscriberController {
     private SubscriberService subscriberService;
 
     @Autowired
-    private ReactiveRedisOperations<String, Content> reactiveRedisTemplate;
+    private TokenPublishService tokenPublishService;
+
+    @Autowired
+    private ReactiveRedisOperations<String, Content> contentTemplate;
+
+    @Autowired
+    private ReactiveRedisOperations<String, Subscriber> tokenTemplate;
 
     @PostConstruct
-    private void init() {
-        this.reactiveRedisTemplate
+    private void initMessageReceiver() {
+        this.contentTemplate
                 .listenTo(ChannelTopic.of("messages"))
                 .map(ReactiveSubscription.Message::getMessage).subscribe(content -> {
                     createMessage(content).subscribe();
@@ -46,7 +54,15 @@ public class SubscriberController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Subscriber> createSubscriber(@RequestBody Subscriber subscriber) {
-        return subscriberService.createSubscriber(subscriber);
+        subscriber.setId(UUID.randomUUID().toString());
+        Mono<Subscriber> savedSubscriber = subscriberService.createSubscriber(subscriber);
+        return savedSubscriber.mapNotNull(sub -> {
+            if (sub != null && sub.getUser_id() != null) {
+                tokenPublishService.initWebClient(sub.getUser_id());
+                tokenPublishService.publish();
+            }
+            return sub;
+        });
     }
 
     @PostMapping("/subscribe")
@@ -56,7 +72,7 @@ public class SubscriberController {
     }
 
     @GetMapping("/{subscriberId}")
-    public Mono<ResponseEntity<Subscriber>> findById(@PathVariable Integer subscriberId) {
+    public Mono<ResponseEntity<Subscriber>> findById(@PathVariable String subscriberId) {
         Mono<Subscriber> subscriber = subscriberService.findById(subscriberId);
         return subscriber.map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -89,5 +105,12 @@ public class SubscriberController {
             restTemplate = ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders()).body(null);
         }
         return restTemplate;
+    }
+
+    @GetMapping("/getToken/{userId}")
+    public Mono<ResponseEntity<Subscriber>> getSubscriberToken(@PathVariable("userId") Integer userId) {
+        Mono<Subscriber> token = subscriberService.getSubscriberToken(userId);
+        return token.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

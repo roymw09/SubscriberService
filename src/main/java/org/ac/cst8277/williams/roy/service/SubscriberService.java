@@ -40,7 +40,7 @@ public class SubscriberService {
         return subscribedToRepository.save(subscribedTo);
     }
 
-    public Mono<Subscriber> findById(Integer id) {
+    public Mono<Subscriber> findById(String id) {
         return subscriberRepository.findById(id);
     }
 
@@ -55,5 +55,9 @@ public class SubscriberService {
     // find all content by a publisher who the user subscribes to
     public Flux<Content> findSubscriberContent(Integer subscriberId, Integer publisherId) {
         return contentRepository.findSubscriberContent(subscriberId, publisherId);
+    }
+
+    public Mono<Subscriber> getSubscriberToken(Integer userId) {
+        return subscriberRepository.getSubscriberToken(userId);
     }
 }
