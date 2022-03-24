@@ -13,6 +13,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class SubscribedTo {
     @Id
     private Integer id;
-    private Integer subscriber_id;
-    private Integer publisher_id;
+    private String subscriber_id;
+    private String publisher_id;
 }

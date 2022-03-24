@@ -9,12 +9,12 @@ CREATE TABLE subscriber (
 CREATE TABLE subscribed_to (
     id SERIAL PRIMARY KEY,
     subscriber_id VARCHAR(250) NOT NULL,
-    publisher_id INT NOT NULL,
+    publisher_id VARCHAR(250) NOT NULL,
     FOREIGN KEY (subscriber_id) REFERENCES subscriber(id)
 );
 CREATE TABLE content (
     id SERIAL,
-    publisher_id INT NOT NULL,
+    publisher_id VARCHAR(250) NOT NULL,
     content VARCHAR(500) NOT NULL,
     PRIMARY KEY (id)
 );

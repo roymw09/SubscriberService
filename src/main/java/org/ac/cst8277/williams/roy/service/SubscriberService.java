@@ -44,16 +44,16 @@ public class SubscriberService {
         return subscriberRepository.findById(id);
     }
 
-    public Flux<SubscribedTo> findAllPublishers(Integer subscriberId) {
+    public Flux<SubscribedTo> findAllPublishers(String subscriberId) {
         return subscribedToRepository.findAllPublishers(subscriberId);
     }
 
-    public Flux<SubscribedTo> findAllSubscribers(Integer publisherId) {
+    public Flux<SubscribedTo> findAllSubscribers(String publisherId) {
         return subscribedToRepository.findAllSubscribers(publisherId);
     }
 
     // find all content by a publisher who the user subscribes to
-    public Flux<Content> findSubscriberContent(Integer subscriberId, Integer publisherId) {
+    public Flux<Content> findSubscriberContent(String subscriberId, String publisherId) {
         return contentRepository.findSubscriberContent(subscriberId, publisherId);
     }
 
