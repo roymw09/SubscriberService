@@ -61,14 +61,14 @@ public class SubscriberControllerTest {
     }
 
     private List<SubscribedTo> getSubscribedToData() {
-        return Arrays.asList(new SubscribedTo(null, 1, 5),
-                new SubscribedTo(null, 2, 5),
-                new SubscribedTo(null, 3, 5));
+        return Arrays.asList(new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()),
+                new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()),
+                new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()));
     }
 
     private List<Content> getContentData() {
-        return Arrays.asList(new Content(null, 5, "Test content"),
-                new Content(null, 5, "More test content"));
+        return Arrays.asList(new Content(null, UUID.randomUUID().toString(), "Test content"),
+                new Content(null, UUID.randomUUID().toString(), "More test content"));
     }
 
     @BeforeEach
@@ -78,20 +78,20 @@ public class SubscriberControllerTest {
                 "DROP TABLE IF EXISTS subscribed_to;",
                 "DROP TABLE IF EXISTS subscriber;",
                 "CREATE TABLE subscriber ( " +
-                        "id SERIAL, " +
+                        "id VARCHAR(250), " +
                         "user_id INT NOT NULL, " +
                         "PRIMARY KEY (id)); ",
 
                 "CREATE TABLE subscribed_to (" +
                         "id SERIAL, " +
-                        "subscriber_id INT NOT NULL, " +
-                        "publisher_id INT NOT NULL," +
+                        "subscriber_id VARCHAR(25) NOT NULL, " +
+                        "publisher_id VARCHAR(250) NOT NULL," +
                         "PRIMARY KEY (id), " +
                         "FOREIGN KEY (subscriber_id) REFERENCES subscriber(id));",
 
                 "CREATE TABLE content (\n" +
                         "    id SERIAL,\n" +
-                        "    publisher_id INT NOT NULL,\n" +
+                        "    publisher_id VARCHAR(25) NOT NULL,\n" +
                         "    content VARCHAR(500) NOT NULL,\n" +
                         "    PRIMARY KEY (id)\n" +
                         ");"
@@ -146,7 +146,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void createMessage() {
-        Content content = new Content(null, 6, "hello");
+        Content content = new Content(null, UUID.randomUUID().toString(), "hello");
         webTestClient.post().uri("/sub/content/create").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(content), Content.class)
                 .exchange()
@@ -178,7 +178,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void subscribeToUser() {
-        SubscribedTo subscribedTo = new SubscribedTo(null, 1, 5);
+        SubscribedTo subscribedTo = new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString());
         webTestClient.post().uri("/sub/subscribe").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(subscribedTo), Subscriber.class)
                 .exchange()

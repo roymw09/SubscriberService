@@ -14,6 +14,6 @@ public class Content {
 
     @Id
     private Integer id;
-    private Integer publisher_id;
+    private String publisher_id;
     private String content;
 }

@@ -79,18 +79,18 @@ public class SubscriberController {
     }
 
     @GetMapping("/findPublishers/{subscriberId}")
-    public Flux<SubscribedTo> findAllPublishers(@PathVariable Integer subscriberId) {
+    public Flux<SubscribedTo> findAllPublishers(@PathVariable String subscriberId) {
         return subscriberService.findAllPublishers(subscriberId);
     }
 
     @GetMapping("/findSubscribers/{publisherId}")
-    public Flux<SubscribedTo> findAllSubscribers(@PathVariable Integer publisherId) {
+    public Flux<SubscribedTo> findAllSubscribers(@PathVariable String publisherId) {
         return subscriberService.findAllSubscribers(publisherId);
     }
 
     @GetMapping("/content/all/{subscriberId}/{publisherId}")
     // find all content by a publisher who the user subscribes to
-    public Flux<Content> findSubscriberContent(@PathVariable Integer subscriberId, @PathVariable Integer publisherId) {
+    public Flux<Content> findSubscriberContent(@PathVariable String subscriberId, @PathVariable String publisherId) {
         return subscriberService.findSubscriberContent(subscriberId, publisherId);
     }
 
