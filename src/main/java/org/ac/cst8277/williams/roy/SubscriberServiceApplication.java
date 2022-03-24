@@ -1,6 +1,7 @@
 package org.ac.cst8277.williams.roy;
 
 import org.ac.cst8277.williams.roy.model.Content;
+import org.ac.cst8277.williams.roy.model.Subscriber;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -33,6 +34,16 @@ public class SubscriberServiceApplication {
     }
 
     @Bean
+    public ReactiveRedisOperations<String, Subscriber> tokenTemplate(LettuceConnectionFactory lettuceConnectionFactory){
+        RedisSerializer<Subscriber> valueSerializer = new Jackson2JsonRedisSerializer<>(Subscriber.class);
+        RedisSerializationContext<String, Subscriber> serializationContext = RedisSerializationContext.<String, Subscriber>newSerializationContext(RedisSerializer.string())
+                .value(valueSerializer)
+                .build();
+        return new ReactiveRedisTemplate<>(lettuceConnectionFactory, serializationContext);
+    }
+
+    /*
+    @Bean
     LettuceConnectionFactory lettuceConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName("redis-cache-server");
@@ -41,6 +52,6 @@ public class SubscriberServiceApplication {
         LettuceClientConfigurationBuilder lettuceClientConfigurationBuilder = LettuceClientConfiguration.builder();
 
         return new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfigurationBuilder.build());
-    }
+    }*/
 
 }

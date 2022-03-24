@@ -24,6 +24,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,11 +49,15 @@ public class SubscriberControllerTest {
     @Autowired
     private DatabaseClient databaseClient;
 
+    private final String subIdOne = UUID.randomUUID().toString();
+    private final String subIdTwo = UUID.randomUUID().toString();
+    private final String subIdThree = UUID.randomUUID().toString();
+
     private List<Subscriber> getSubscriberData() {
         User test = new User();
-        return Arrays.asList(new Subscriber(null, 1),
-                new Subscriber(null, 2),
-                new Subscriber(null, 3));
+        return Arrays.asList(new Subscriber(subIdOne, 1),
+                new Subscriber(subIdTwo, 2),
+                new Subscriber(subIdThree, 3));
     }
 
     private List<SubscribedTo> getSubscribedToData() {
@@ -127,7 +132,7 @@ public class SubscriberControllerTest {
         webTestClient.get().uri("/sub".concat("/{subscriberId}"), "1")
                 .exchange()
                 .expectBody()
-                .jsonPath("$.user_id", "1");
+                .jsonPath("$.user_id", subIdOne);
     }
 
     @Test
@@ -153,7 +158,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void getContentForSubscriber() {
-        webTestClient.get().uri("/sub".concat("/content/all/{subscriberId}/{publisherId}"), "1", "5")
+        webTestClient.get().uri("/sub".concat("/content/all/{subscriberId}/{publisherId}"), subIdOne, "5")
                 .exchange()
                 .expectBody()
                 .jsonPath("$.publisher_id", "5");
@@ -180,7 +185,7 @@ public class SubscriberControllerTest {
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.subscriber_id").isEqualTo("1")
+                .jsonPath("$.subscriber_id").isEqualTo(subIdOne)
                 .jsonPath("$.publisher_id").isEqualTo("5");
     }
 
@@ -189,7 +194,7 @@ public class SubscriberControllerTest {
         webTestClient.get().uri("/sub".concat("/findPublishers/{subscriberId}"), "1")
                 .exchange()
                 .expectBody()
-                .jsonPath("$.user_id", "1");
+                .jsonPath("$.user_id", subIdOne);
     }
 
     @Test
@@ -197,6 +202,6 @@ public class SubscriberControllerTest {
         webTestClient.get().uri("/sub".concat("/findSubscribers/{publisherId}"), "1")
                 .exchange()
                 .expectBody()
-                .jsonPath("$.user_id", "1");
+                .jsonPath("$.user_id", subIdOne);
     }
 }
