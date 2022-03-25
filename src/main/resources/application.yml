@@ -10,7 +10,7 @@ spring:
 spring:
   profiles: dev
   r2dbc:
-    url: r2dbc:postgresql://localhost:5433/testsub
+    url: r2dbc:postgresql://localhost:5432/testsub
     username: postgres
     password: password
 logging:

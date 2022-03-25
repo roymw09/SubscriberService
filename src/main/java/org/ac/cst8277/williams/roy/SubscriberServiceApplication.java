@@ -42,7 +42,6 @@ public class SubscriberServiceApplication {
         return new ReactiveRedisTemplate<>(lettuceConnectionFactory, serializationContext);
     }
 
-    /*
     @Bean
     LettuceConnectionFactory lettuceConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -52,6 +51,5 @@ public class SubscriberServiceApplication {
         LettuceClientConfigurationBuilder lettuceClientConfigurationBuilder = LettuceClientConfiguration.builder();
 
         return new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfigurationBuilder.build());
-    }*/
-
+    }
 }
