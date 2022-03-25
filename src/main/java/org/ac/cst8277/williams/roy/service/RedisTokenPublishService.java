@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class TokenPublishService {
-    private String API_ENDPOINT = "http://localhost:8082/sub/getToken/";
+public class RedisTokenPublishService {
+    private String API_ENDPOINT = "http://localhost:8082/sub/subscriber/getToken/";
     private WebClient webClient;
 
     @Autowired
