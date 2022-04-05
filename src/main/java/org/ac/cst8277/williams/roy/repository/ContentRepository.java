@@ -12,5 +12,5 @@ public interface ContentRepository extends ReactiveCrudRepository<Content, Long>
             "FROM content, subscribed_to " +
             "WHERE content.publisher_id = subscribed_to.publisher_id " +
             "AND subscribed_to.subscriber_id = :subscriberId ")
-    Flux<Content> findSubscriberContent(@Param("subscriberId") String subscriberId);
+    Flux<Content> findSubscriberContent(@Param("subscriberId") Integer subscriberId);
 }

@@ -6,9 +6,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
-public interface SubscriberRepository extends ReactiveCrudRepository<Subscriber, String> {
-    @Query("SELECT * FROM subscriber WHERE id = :subscriberId")
-    Mono<Subscriber> findById(@Param("subscriberId") String subscriberId);
+public interface SubscriberRepository extends ReactiveCrudRepository<Subscriber, Integer> {
+    @Query("SELECT * FROM subscriber WHERE user_id = :subscriberId")
+    Mono<Subscriber> findById(@Param("subscriberId") Integer subscriberId);
 
     @Query("SELECT * FROM SUBSCRIBER WHERE user_id = :userId")
     Mono<Subscriber> getSubscriberToken(@Param("userId") Integer userId);

@@ -61,14 +61,14 @@ public class SubscriberControllerTest {
     }
 
     private List<SubscribedTo> getSubscribedToData() {
-        return Arrays.asList(new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()),
-                new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()),
-                new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+        return Arrays.asList(new SubscribedTo(null, 1, 1),
+                new SubscribedTo(null, 2, 1),
+                new SubscribedTo(null, 3, 3));
     }
 
     private List<Content> getContentData() {
-        return Arrays.asList(new Content(null, UUID.randomUUID().toString(), "Test content"),
-                new Content(null, UUID.randomUUID().toString(), "More test content"));
+        return Arrays.asList(new Content(null, 1, "Test content"),
+                new Content(null, 1, "More test content"));
     }
 
     @BeforeEach
@@ -146,7 +146,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void createMessage() {
-        Content content = new Content(null, UUID.randomUUID().toString(), "hello");
+        Content content = new Content(null, 1, "hello");
         webTestClient.post().uri("/sub/content/create").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(content), Content.class)
                 .exchange()
@@ -178,7 +178,7 @@ public class SubscriberControllerTest {
 
     @Test
     public void subscribeToUser() {
-        SubscribedTo subscribedTo = new SubscribedTo(null, UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        SubscribedTo subscribedTo = new SubscribedTo(null, 2, 3);
         webTestClient.post().uri("/sub/subscribe").contentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE))
                 .body(Mono.just(subscribedTo), Subscriber.class)
                 .exchange()

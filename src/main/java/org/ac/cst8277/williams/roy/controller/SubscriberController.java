@@ -1,10 +1,13 @@
 package org.ac.cst8277.williams.roy.controller;
 
+import org.ac.cst8277.williams.roy.model.JwtRequest;
+import org.ac.cst8277.williams.roy.model.JwtResponse;
 import org.ac.cst8277.williams.roy.model.Subscriber;
 import org.ac.cst8277.williams.roy.model.User;
 import org.ac.cst8277.williams.roy.service.SubscriberService;
 import org.ac.cst8277.williams.roy.service.RedisTokenPublishService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,25 +23,29 @@ public class SubscriberController {
     @Autowired
     private SubscriberService subscriberService;
 
-    @Autowired
-    private RedisTokenPublishService redisTokenPublishService;
-
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Subscriber> createSubscriber(@RequestBody Subscriber subscriber) {
-        subscriber.setId(UUID.randomUUID().toString());
-        Mono<Subscriber> savedSubscriber = subscriberService.createSubscriber(subscriber);
-        return savedSubscriber.mapNotNull(sub -> {
-            if (sub != null && sub.getUser_id() != null) {
-                redisTokenPublishService.initWebClient(sub.getUser_id());
-                redisTokenPublishService.publish();
-            }
-            return sub;
-        });
+    public ResponseEntity<Subscriber> createSubscriber(@RequestBody Subscriber subscriber) {
+        Integer userId = subscriber.getUser_id();
+        String username = new RestTemplate().getForObject("http://localhost:8081/users/user/getUsername/" + userId, String.class);
+        JwtRequest tokenRequest = new JwtRequest(username, "password");
+        tokenRequest.setUser_id(userId);
+        HttpEntity<JwtRequest> jwtRequestEntity = new HttpEntity<>(tokenRequest);
+        ResponseEntity<Subscriber> responseEntity;
+        try {
+            ResponseEntity<JwtResponse> response = new RestTemplate().postForEntity(
+                    "http://localhost:8081/authenticate/subscriber", jwtRequestEntity, JwtResponse.class);
+            subscriber.setId(response.getBody().getToken());
+            subscriberService.createSubscriber(subscriber).subscribe();
+            responseEntity = new ResponseEntity<>(subscriber, response.getStatusCode());
+        } catch (HttpClientErrorException e) {
+            responseEntity = new ResponseEntity<>(null, e.getStatusCode());
+        }
+        return responseEntity;
     }
 
     @GetMapping("/{subscriberId}")
-    public Mono<ResponseEntity<Subscriber>> findById(@PathVariable String subscriberId) {
+    public Mono<ResponseEntity<Subscriber>> findById(@PathVariable Integer subscriberId) {
         Mono<Subscriber> subscriber = subscriberService.findById(subscriberId);
         return subscriber.map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

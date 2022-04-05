@@ -20,7 +20,7 @@ public class SubscriberService {
         return subscriberRepository.save(subscriber);
     }
 
-    public Mono<Subscriber> findById(String id) {
+    public Mono<Subscriber> findById(Integer id) {
         return subscriberRepository.findById(id);
     }
 

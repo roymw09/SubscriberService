@@ -23,7 +23,7 @@ public class ContentService {
     }
 
     // find all content by a publisher who the user subscribes to
-    public Flux<Content> findSubscriberContent(String subscriberId) {
+    public Flux<Content> findSubscriberContent(Integer subscriberId) {
         return contentRepository.findSubscriberContent(subscriberId);
     }
 }

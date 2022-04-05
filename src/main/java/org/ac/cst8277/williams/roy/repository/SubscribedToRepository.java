@@ -9,7 +9,7 @@ import reactor.core.publisher.Flux;
 public interface SubscribedToRepository extends ReactiveCrudRepository<SubscribedTo, String> {
     // find all publishers a user is subscribed to
     @Query("SELECT * FROM subscribed_to WHERE subscriber_id = :subscriberId")
-    Flux<SubscribedTo> findAllPublishers(@Param("subscriberId") String subscriberId);
+    Flux<SubscribedTo> findAllPublishers(@Param("subscriberId") Integer subscriberId);
 
     // find all subscribers who are subscribed to a publisher
     @Query("SELECT * FROM subscribed_to WHERE publisher_id = :publisherId")

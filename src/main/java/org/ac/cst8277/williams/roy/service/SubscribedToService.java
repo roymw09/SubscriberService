@@ -17,7 +17,7 @@ public class SubscribedToService {
     @Autowired
     private SubscribedToRepository subscribedToRepository;
 
-    public Flux<SubscribedTo> findAllPublishers(String subscriberId) {
+    public Flux<SubscribedTo> findAllPublishers(Integer subscriberId) {
         return subscribedToRepository.findAllPublishers(subscriberId);
     }
 
