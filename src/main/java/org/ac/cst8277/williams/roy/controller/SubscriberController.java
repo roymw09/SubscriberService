@@ -5,7 +5,6 @@ import org.ac.cst8277.williams.roy.model.JwtResponse;
 import org.ac.cst8277.williams.roy.model.Subscriber;
 import org.ac.cst8277.williams.roy.model.User;
 import org.ac.cst8277.williams.roy.service.SubscriberService;
-import org.ac.cst8277.williams.roy.service.RedisTokenPublishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/sub/subscriber")
