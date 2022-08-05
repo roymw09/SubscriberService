@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 public class ContentController {
 
     @Autowired
-    ContentService contentService;
+    private ContentService contentService;
 
     @Autowired
     private ReactiveRedisOperations<String, Content> contentTemplate;
