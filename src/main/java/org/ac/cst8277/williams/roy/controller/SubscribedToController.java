@@ -14,8 +14,11 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/sub/subscribedTo")
 public class SubscribedToController {
 
-    @Autowired
-    private SubscribedToService subscribedToService;
+    private final SubscribedToService subscribedToService;
+
+    public SubscribedToController(SubscribedToService subscribedToService) {
+        this.subscribedToService = subscribedToService;
+    }
 
     @PostMapping("/subscribe")
     @ResponseStatus(HttpStatus.CREATED)

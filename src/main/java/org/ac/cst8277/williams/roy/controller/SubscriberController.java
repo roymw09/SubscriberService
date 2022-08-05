@@ -11,8 +11,11 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/sub/subscriber")
 public class SubscriberController {
 
-    @Autowired
-    private SubscriberService subscriberService;
+    private final SubscriberService subscriberService;
+
+    public SubscriberController(SubscriberService subscriberService) {
+        this.subscriberService = subscriberService;
+    }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)

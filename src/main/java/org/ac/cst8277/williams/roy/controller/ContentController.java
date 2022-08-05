@@ -16,11 +16,14 @@ import javax.annotation.PostConstruct;
 @RequestMapping("/sub/content")
 public class ContentController {
 
-    @Autowired
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    @Autowired
-    private ReactiveRedisOperations<String, Content> contentTemplate;
+    private final ReactiveRedisOperations<String, Content> contentTemplate;
+
+    public ContentController(ContentService contentService, ReactiveRedisOperations<String, Content> contentTemplate) {
+        this.contentService = contentService;
+        this.contentTemplate = contentTemplate;
+    }
 
     @PostConstruct
     private void initMessageReceiver() {
