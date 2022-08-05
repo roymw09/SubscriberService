@@ -27,15 +27,6 @@ public class SubscriberServiceApplication {
         RedisSerializationContext<String, Content> serializationContext = RedisSerializationContext.<String, Content>newSerializationContext(RedisSerializer.string())
                 .value(valueSerializer)
                 .build();
-        return new ReactiveRedisTemplate<String, Content>(lettuceConnectionFactory, serializationContext);
-    }
-
-    @Bean
-    public ReactiveRedisOperations<String, Subscriber> tokenTemplate(LettuceConnectionFactory lettuceConnectionFactory){
-        RedisSerializer<Subscriber> valueSerializer = new Jackson2JsonRedisSerializer<>(Subscriber.class);
-        RedisSerializationContext<String, Subscriber> serializationContext = RedisSerializationContext.<String, Subscriber>newSerializationContext(RedisSerializer.string())
-                .value(valueSerializer)
-                .build();
         return new ReactiveRedisTemplate<>(lettuceConnectionFactory, serializationContext);
     }
 
