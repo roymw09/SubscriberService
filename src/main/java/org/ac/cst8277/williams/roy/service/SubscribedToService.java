@@ -10,12 +10,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@Slf4j
 @Transactional
 public class SubscribedToService {
 
-    @Autowired
-    private SubscribedToRepository subscribedToRepository;
+    private final SubscribedToRepository subscribedToRepository;
+
+    public SubscribedToService(SubscribedToRepository subscribedToRepository) {
+        this.subscribedToRepository = subscribedToRepository;
+    }
 
     public Flux<SubscribedTo> findAllPublishers(Integer subscriberId) {
         return subscribedToRepository.findAllPublishers(subscriberId);

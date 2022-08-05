@@ -10,12 +10,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@Slf4j
 @Transactional
 public class ContentService {
 
-    @Autowired
-    private ContentRepository contentRepository;
+    private final ContentRepository contentRepository;
+
+    public ContentService(ContentRepository contentRepository) {
+        this.contentRepository = contentRepository;
+    }
 
     public Mono<Content> createMessage(Content content) {
         Content subContent = new Content(null, content.getPublisher_id(), content.getContent());

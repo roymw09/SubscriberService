@@ -13,8 +13,11 @@ import reactor.core.publisher.Mono;
 @Transactional
 public class SubscriberService {
 
-    @Autowired
-    private SubscriberRepository subscriberRepository;
+    private final SubscriberRepository subscriberRepository;
+
+    public SubscriberService(SubscriberRepository subscriberRepository) {
+        this.subscriberRepository = subscriberRepository;
+    }
 
     public Mono<Subscriber> createSubscriber(Subscriber subscriber) {
         return subscriberRepository.save(subscriber);
@@ -22,9 +25,5 @@ public class SubscriberService {
 
     public Mono<Subscriber> findById(Integer id) {
         return subscriberRepository.findById(id);
-    }
-
-    public Mono<Subscriber> getSubscriberToken(Integer userId) {
-        return subscriberRepository.getSubscriberToken(userId);
     }
 }
