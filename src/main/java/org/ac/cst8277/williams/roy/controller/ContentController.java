@@ -27,7 +27,7 @@ public class ContentController {
         this.contentTemplate
                 .listenTo(ChannelTopic.of("messages"))
                 .map(ReactiveSubscription.Message::getMessage).subscribe(content -> {
-                    createMessage(content).subscribe();
+                    createMessage(content);
                 });
     }
 

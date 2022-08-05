@@ -19,9 +19,8 @@ public class SubscribedToController {
 
     @PostMapping("/subscribe")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<SubscribedTo> subscribe(@RequestBody SubscribedTo subscribedTo) {
-        subscribedToService.subscribe(subscribedTo).subscribe();
-        return new ResponseEntity<>(subscribedTo, HttpStatus.OK);
+    public Mono<SubscribedTo> subscribe(@RequestBody SubscribedTo subscribedTo) {
+        return subscribedToService.subscribe(subscribedTo);
     }
 
     // find all the publishers a subscriber is subscribed to
