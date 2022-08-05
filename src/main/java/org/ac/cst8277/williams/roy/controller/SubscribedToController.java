@@ -15,26 +15,13 @@ import reactor.core.publisher.Mono;
 public class SubscribedToController {
 
     @Autowired
-    SubscribedToService subscribedToService;
+    private SubscribedToService subscribedToService;
 
-    @PostMapping("/subscribe/{token}")
+    @PostMapping("/subscribe")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<SubscribedTo> subscribe(@PathVariable("token") String token, @RequestBody SubscribedTo subscribedTo) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        try {
-            ResponseEntity<String> response = new RestTemplate().
-                    exchange("http://localhost:8081/authenticate/validate", HttpMethod.GET, request, String.class);
-            if (response.getStatusCode() == HttpStatus.OK) {
-                subscribedToService.subscribe(subscribedTo).subscribe();
-                return new ResponseEntity<>(subscribedTo, response.getStatusCode());
-            } else {
-                return new ResponseEntity<>(null, response.getStatusCode());
-            }
-        } catch (HttpClientErrorException e) {
-            return new ResponseEntity<>(null, e.getStatusCode());
-        }
+    public ResponseEntity<SubscribedTo> subscribe(@RequestBody SubscribedTo subscribedTo) {
+        subscribedToService.subscribe(subscribedTo).subscribe();
+        return new ResponseEntity<>(subscribedTo, HttpStatus.OK);
     }
 
     // find all the publishers a subscriber is subscribed to
