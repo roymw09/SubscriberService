@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS subscribed_to;
 DROP TABLE IF EXISTS subscriber;
 
 CREATE TABLE subscriber (
-    id VARCHAR(250) PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL UNIQUE
 );
 CREATE TABLE subscribed_to (
