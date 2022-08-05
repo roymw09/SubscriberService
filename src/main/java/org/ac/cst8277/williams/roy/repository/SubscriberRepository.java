@@ -9,7 +9,4 @@ import reactor.core.publisher.Mono;
 public interface SubscriberRepository extends ReactiveCrudRepository<Subscriber, Integer> {
     @Query("SELECT * FROM subscriber WHERE user_id = :subscriberId")
     Mono<Subscriber> findById(@Param("subscriberId") Integer subscriberId);
-
-    @Query("SELECT * FROM SUBSCRIBER WHERE user_id = :userId")
-    Mono<Subscriber> getSubscriberToken(@Param("userId") Integer userId);
 }
