@@ -8,7 +8,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Table("subscribed_to")
 public class SubscribedTo {
     @Id
