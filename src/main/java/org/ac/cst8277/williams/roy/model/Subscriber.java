@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @Table("subscriber")
 public class Subscriber {
-    private String id;
+    @Id
+    private Integer id;
     private Integer user_id;
 }
